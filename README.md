@@ -1,2 +1,2 @@
 # Wishlist-tracker
-This project will track websites and find salees
+This project will track websites and find sales
