@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Test Hoodie (fake) | Local Test Store</title>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Product",
+  "name": "Test Hoodie (fake)",
+  "sku": "TEST-001",
+  "image": "https://picsum.photos/seed/testhoodie/300/300",
+  "description": "A fake product for testing the price tracker extension. Not a real item.",
+  "offers": {
+    "@type": "Offer",
+    "availability": "http://schema.org/InStock",
+    "priceCurrency": "USD",
+    "price": 59.99
+  }
+}
+</script>
+<style>
+  body { font-family: -apple-system, sans-serif; max-width: 480px; margin: 40px auto; color: #1f2937; }
+  .banner { background: #fef3c7; border: 1px solid #f59e0b; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 24px; }
+  img { width: 220px; border-radius: 8px; }
+  h1 { font-size: 20px; }
+  .price { font-size: 24px; font-weight: 700; margin: 8px 0 20px; }
+  button { padding: 10px 18px; border-radius: 8px; border: none; font-size: 14px; cursor: pointer; margin-right: 10px; }
+  .add-to-bag-button { background: #1f2937; color: #fff; }
+  .add-to-list-button { background: #e5e7eb; color: #1f2937; }
+</style>
+</head>
+<body>
+  <div class="banner">Local test product - not a real store. Used to test the Wishlist Price Tracker extension.</div>
+  <img src="https://picsum.photos/seed/testhoodie/300/300" alt="fake hoodie" />
+  <h1>Test Hoodie (fake)</h1>
+  <div class="price" id="priceDisplay">$59.99</div>
+  <button class="add-to-bag-button">Add To Bag</button>
+  <button class="add-to-list-button" data-testid="add-to-list-button">Add to List</button>
+
+  <script>
+    // Purely cosmetic: mirrors the JSON-LD price into the visible price tag
+    // above so the page looks right when you open it yourself. The
+    // extension's background price-check never runs this script - it reads
+    // the JSON-LD straight out of the raw HTML, exactly like it would on a
+    // real store.
+    try {
+      const ld = JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent);
+      document.getElementById("priceDisplay").textContent = "$" + Number(ld.offers.price).toFixed(2);
+    } catch (e) {}
+  </script>
+</body>
+</html>

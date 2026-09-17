@@ -76,3 +76,38 @@ icons/                        toolbar icon
 - This only tracks items added *after* the extension is installed (or
   added manually going forward) - it can't retroactively see your existing
   cart/wishlist history.
+
+## Testing without waiting for a real sale
+
+There's a fake local product page under `test-site/` wired into the
+extension the same way Hollister is, so you can test the whole flow -
+tracking, re-checking, and the price-drop notification - on demand.
+
+1. In a terminal, start a local server for it:
+   ```
+   cd test-site
+   python3 -m http.server 8000
+   ```
+   Leave that running. Then open `http://localhost:8000/product.html` in
+   the same Chrome profile you loaded the extension into.
+2. Click **Add To Bag** or **Add to List** on that page - same toast,
+   same popup entry as a real store.
+3. Change the price:
+   ```
+   python3 set_price.py 39.99
+   ```
+   (run from the `test-site/` folder, or `python3 test-site/set_price.py 39.99`
+   from the repo root)
+4. Reload `http://localhost:8000/product.html` in the browser if you want
+   to see the new price on the page itself (optional - not required for
+   the test).
+5. Open the extension popup and click **Check Now**. It re-fetches
+   `product.html` and re-parses the price, exactly like it would for a
+   real tracked item.
+
+Note: right now the extension only sends a notification when a price
+*drops* - a price *increase* is still recorded (you'll see it reflected
+in the popup and in price history) but won't trigger a notification,
+since the point of the tracker is catching deals, not price hikes. Set a
+lower price with `set_price.py` to see the drop notification fire; set a
+higher one to confirm it updates silently without notifying.
