@@ -7,6 +7,7 @@ const emptyStateEl = document.getElementById("emptyState");
 const statusLineEl = document.getElementById("statusLine");
 const checkNowBtn = document.getElementById("checkNowBtn");
 const storeHintEl = document.getElementById("storeHint");
+const dropBannerEl = document.getElementById("dropBanner");
 
 document.querySelectorAll(".tab-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -15,6 +16,12 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
     activeList = btn.dataset.list;
     render();
   });
+});
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message?.type === "CHECK_PROGRESS") {
+    statusLineEl.textContent = `Checking ${message.current}/${message.total}: ${message.itemName || "..."}`;
+  }
 });
 
 checkNowBtn.addEventListener("click", () => {
@@ -111,4 +118,40 @@ async function render() {
 }
 
 storeHintEl.textContent = "Currently tracking: Hollister";
+
+async function showAndClearUnseenDrops() {
+  const data = await chrome.storage.local.get("unseenDropIds");
+  const unseenIds = data.unseenDropIds || [];
+  if (unseenIds.length > 0) {
+    dropBannerEl.textContent =
+      unseenIds.length === 1 ? "1 price drop since you last checked!" : `${unseenIds.length} price drops since you last checked!`;
+    dropBannerEl.hidden = false;
+    chrome.runtime.sendMessage({ type: "MARK_DROPS_SEEN" });
+  }
+}
+
+showAndClearUnseenDrops();
 render();
+
+document.getElementById("syncBtn").addEventListener("click", async () => {
+  const data = await chrome.storage.local.get("trackedItems");
+  const items = Object.values(data.trackedItems || {}).map((item) => ({
+    id: item.id,
+    store: item.store,
+    listType: item.listType,
+    url: item.url,
+    name: item.name,
+    currentPrice: item.currentPrice,
+    originalPrice: item.originalPrice,
+  }));
+
+  const blob = new Blob([JSON.stringify(items, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "tracked-items.json";
+  a.click();
+  URL.revokeObjectURL(url);
+
+  statusLineEl.textContent = `Downloaded ${items.length} item(s) - move this file to data/tracked-items.json in your repo, then commit & push.`;
+});

@@ -160,3 +160,33 @@ footer {
   color: #9ca3af;
   border-top: 1px solid #e5e7eb;
 }
+
+.drop-banner {
+  margin: 8px 14px 0;
+  padding: 8px 10px;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sync-btn {
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-size: 10.5px;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.sync-btn:hover {
+  background: #f3f4f6;
+}

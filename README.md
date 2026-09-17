@@ -111,3 +111,48 @@ in the popup and in price history) but won't trigger a notification,
 since the point of the tracker is catching deals, not price hikes. Set a
 lower price with `set_price.py` to see the drop notification fire; set a
 higher one to confirm it updates silently without notifying.
+
+## Cloud checking (works even with your laptop off)
+
+The extension alone can only check prices while Chrome is running. There's
+an optional second layer under `.github/workflows/` and `scripts/` that
+runs the same kind of check on GitHub's servers once a day via GitHub
+Actions - free, no server to maintain, works whether or not your laptop is
+on. Since it can't show a Chrome notification, it emails you instead
+(plain Gmail SMTP, not EmailJS - GitHub can safely hold a real credential
+as an encrypted Secret, which client-side extension code can't).
+
+**One-time setup:**
+
+1. Turn on 2-Step Verification on your Google account (required for the
+   next step), then create a Gmail **App Password**:
+   https://myaccount.google.com/apppasswords
+2. In your repo on github.com: **Settings -> Secrets and variables ->
+   Actions -> New repository secret**, and add three:
+   - `GMAIL_ADDRESS` - the Gmail address sending the email
+   - `GMAIL_APP_PASSWORD` - the app password from step 1
+   - `NOTIFY_EMAIL` - the address you want notified (can be the same one)
+3. That's it - the workflow in `.github/workflows/price-check.yml` runs
+   daily at 13:00 UTC automatically. You can also trigger it manually
+   from the repo's **Actions** tab (Daily price check -> Run workflow) to
+   test it without waiting for the schedule.
+
+**Keeping it in sync with what you're tracking:**
+
+The cloud job reads `data/tracked-items.json`, which is separate from the
+extension's own local storage - it only knows about items you've
+explicitly synced. Whenever you want the cloud job to pick up new items:
+
+1. Open the extension popup and click **Sync to GitHub** (bottom right) -
+   this downloads `tracked-items.json`.
+2. Move that downloaded file into `data/tracked-items.json` in your repo
+   folder (overwriting the old one).
+3. Commit and push:
+   ```
+   git add data/tracked-items.json
+   git commit -m "Sync tracked items"
+   git push
+   ```
+
+`data/price-state.json` is different - the workflow updates and commits
+that one itself after every run, so you don't need to touch it.
