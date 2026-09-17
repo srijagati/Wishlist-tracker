@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Wishlist Price Tracker",
+  "version": "0.1.0",
+  "description": "Tracks prices on items you add to your cart or wishlist and notifies you when they drop. Starting with Hollister.",
+  "permissions": ["storage", "alarms", "notifications", "scripting", "activeTab"],
+  "host_permissions": ["https://www.hollisterco.com/*"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.hollisterco.com/*"],
+      "js": ["content-scripts/hollister.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Wishlist Price Tracker",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

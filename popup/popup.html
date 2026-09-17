@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wishlist Price Tracker</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <h1>Price Tracker</h1>
+    <button id="checkNowBtn" title="Check all tracked prices now">Check Now</button>
+  </header>
+
+  <div id="statusLine" class="status-line"></div>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-list="cart">Cart</button>
+    <button class="tab-btn" data-list="wishlist">Wishlist</button>
+  </nav>
+
+  <ul id="itemList" class="item-list"></ul>
+  <p id="emptyState" class="empty-state" hidden>Nothing tracked here yet. Add something to your cart or wishlist on a supported store and it'll show up here.</p>
+
+  <footer>
+    <span id="storeHint" class="store-hint"></span>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
